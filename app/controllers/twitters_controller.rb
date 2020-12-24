@@ -1,10 +1,15 @@
 class TwittersController < ApplicationController
-  before_action :set_twitter, only: [:show, :edit, :update, :destroy]
+  before_action :set_twitter, only: [:show, :edit, :update, :destroy, :like, :unlike]
+  before_action :authenticate_user!, except: [:index, :show] 
+  
 
   # GET /twitters
   # GET /twitters.json
   def index
     @twitters = Twitter.all
+   
+    @twitters = Kaminari.paginate_array(@twitters).page(params[:page]).per(3)
+    @twitter = Twitter.new
   end
 
   # GET /twitters/1
@@ -14,7 +19,7 @@ class TwittersController < ApplicationController
 
   # GET /twitters/new
   def new
-    @twitter = Twitter.new
+    @twitter = current_user.twitter.build
   end
 
   # GET /twitters/1/edit
@@ -24,7 +29,7 @@ class TwittersController < ApplicationController
   # POST /twitters
   # POST /twitters.json
   def create
-    @twitter = Twitter.new(twitter_params)
+    @twitter = current_user.twitter.build(twitter_params)
 
     respond_to do |format|
       if @twitter.save
@@ -61,6 +66,27 @@ class TwittersController < ApplicationController
     end
   end
 
+
+  def like 
+
+     @twitter.liked_by current_user
+    respond_to do |format|
+      format.html { redirect_to :twitters_path }
+      format.js { render layout: false }
+    end
+  end
+
+  def unlike
+   
+    @twitter.unliked_by current_user
+    respond_to do |format|
+    format.html { redirect_to :twitters_path }
+    format.js { render layout: false }
+    end
+
+  end
+
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_twitter
@@ -69,6 +95,6 @@ class TwittersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def twitter_params
-      params.require(:twitter).permit(:tweet)
+      params.require(:twitter).permit(:twitter)
     end
 end

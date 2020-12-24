@@ -17,6 +17,7 @@ gem 'guard-livereload', '~>2.5', '>= 2.5.2', require: false
 gem 'bulma-rails', '~> 0.6.1'
 gem 'simple_form'
 gem 'gravatar_image_tag', '~> 1.2'
+gem 'acts_as_votable', '~> 0.13.1'
 
 gem 'puma', '~> 4.1'
 # Use SCSS for stylesheets

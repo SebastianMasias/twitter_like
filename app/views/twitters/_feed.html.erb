@@ -1,0 +1,76 @@
+<div class="column is-half">
+  <% if user_signed_in? %>
+	<article class="media box">
+		<figure class="media-left">
+			<p class="image is-64x64">
+			<%= gravatar_image_tag(current_user.email, size: 64, alt: current_user.name) %>
+			</p>
+		</figure>
+		<div class="media-content">
+			 <%= render 'twitters/form' %>
+		</div>
+	</article>
+  <% end %>
+
+
+<% @twitters.each do | twitter | %>
+  <div class="box">
+  	<article class="media">
+  		<div class="media-left">
+  			<figure class="image is-64x64">
+  				<%= gravatar_image_tag(twitter.user.try(:email), size: 64, alt: twitter.user.try(:name)) %>
+  			</figure>
+  		</div>
+		  	  
+  		<div class="media-content">
+
+  			<div class="content">
+  				<strong><%= twitter.user.try(:name) %></strong><br />
+  				<small><%= twitter.user.try(:username) %></small><br/>
+				<p><%= twitter.twitter %></p>
+				  <%= link_to like_twitter_path(twitter), method: :put, remote: true, class: "like-btn" do %>
+					<span class="likes-count"><%= twitter.get_likes.size %></span><i class="fas fa-heart"></i>
+				<% end %>	
+								
+  			</div>
+
+
+        	<%if user_signed_in? && current_user.id == twitter.user_id %>
+  				<nav class="level">
+  					<div class="level-left is-mobile">
+
+							<%= link_to twitter, class: "level-item" do %>
+								<span class="icon"><i class="fa fa-link" aria-hidden="true"></i></span>
+							<% end %>
+
+							<%= link_to edit_twitter_path(twitter), class: "level-item" do %>
+								<span class="icon"><i class="fa fa-pencil" aria-hidden="true"></i></span>
+							<% end %>
+
+							<%= link_to twitter, method: :delete, data: { confirm: "Are you sure you want to delete this tweet?" } do %>
+								<span class="icon"><i class="fa fa-trash-o" aria-hidden="true"></i></span>
+							<% end %>
+
+		
+							<%if current_user.liked? twitter %>
+										<%= link_to unlike_twitter_path(twitter), method: :put, remote: true, class: "like-btn is-primary" do %>
+										<span class="likes-count"><%= twitter.get_likes.size %></span><i class="fas fa-heart"></i>	
+										<% end %>
+
+									<% else %>
+
+										<%= link_to like_twitter_path(twitter), method: :put, remote: true, class: "like-btn" do %>
+										<span class="likes-count"><%= twitter.get_likes.size %></span><i class="fas fa-heart"></i>
+										<% end %>								
+							<% end %>
+					  
+					  </div>
+  				</nav>
+        	<% end %>
+  		</div>
+  	</article>
+	
+  </div>
+<% end %>
+  <%= paginate @twitters %>
+</div>

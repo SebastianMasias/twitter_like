@@ -1,0 +1,5 @@
+$('.like_twitter').bind('ajax:success', function(){
+   $(this).parent().parent().find('.vote_count').html('<%= escape_javascript @twitter.votes_for.size.to_s %>');
+   $(this).closest('.like_post').hide();
+   $(this).closest('.votes').html(' <%= link_to "dislike", dislike_twitter_path(@twitter), remote: true, method: :get, class: 'dislike' %>');
+});
