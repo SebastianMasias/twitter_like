@@ -1,13 +1,16 @@
 class TwittersController < ApplicationController
-  before_action :set_twitter, only: [:show, :edit, :update, :destroy, :like, :unlike]
+  before_action :set_twitter, only: [:show, :edit, :update, :destroy, :like, :unlike, :follow, :unfollow]
   before_action :authenticate_user!, except: [:index, :show] 
   
-
   # GET /twitters
   # GET /twitters.json
   def index
+    @q = Twitter.ransack(params[:q])
+    @twitters = @q.result(distinct: true)
+
+    
     @twitters = Twitter.all
-   
+
     @twitters = Kaminari.paginate_array(@twitters).page(params[:page]).per(3)
     @twitter = Twitter.new
   end
@@ -15,6 +18,8 @@ class TwittersController < ApplicationController
   # GET /twitters/1
   # GET /twitters/1.json
   def show
+    @hashtag = SimpleHashtag::Hashtag.find_by_name(params[:hashtag])
+    @hashtagged = @hashtag.hashtaggables if @hashtag
   end
 
   # GET /twitters/new
@@ -30,9 +35,9 @@ class TwittersController < ApplicationController
   # POST /twitters.json
   def create
     @twitter = current_user.twitter.build(twitter_params)
-
+    
     respond_to do |format|
-      if @twitter.save
+      if @twitter.save 
         format.html { redirect_to @twitter, notice: 'Twitter was successfully created.' }
         format.json { render :show, status: :created, location: @twitter }
       else
@@ -85,6 +90,19 @@ class TwittersController < ApplicationController
     end
 
   end
+
+    def follow 
+      
+      @current_user.follow(@twitter)
+      
+    end
+
+    def unfollow
+
+        @current_user.stop_following(@twitter)
+
+    end
+
 
 
   private

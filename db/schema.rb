@@ -10,7 +10,69 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_23_024209) do
+ActiveRecord::Schema.define(version: 2021_01_11_022041) do
+
+  create_table "active_admin_comments", force: :cascade do |t|
+    t.string "namespace"
+    t.text "body"
+    t.string "resource_type"
+    t.integer "resource_id"
+    t.string "author_type"
+    t.integer "author_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
+    t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+  end
+
+  create_table "admin_users", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["email"], name: "index_admin_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
+  end
+
+  create_table "follows", force: :cascade do |t|
+    t.string "followable_type", null: false
+    t.integer "followable_id", null: false
+    t.string "follower_type", null: false
+    t.integer "follower_id", null: false
+    t.boolean "blocked", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["followable_id", "followable_type"], name: "fk_followables"
+    t.index ["followable_type", "followable_id"], name: "index_follows_on_followable_type_and_followable_id"
+    t.index ["follower_id", "follower_type"], name: "fk_follows"
+    t.index ["follower_type", "follower_id"], name: "index_follows_on_follower_type_and_follower_id"
+  end
+
+  create_table "simple_hashtag", force: :cascade do |t|
+    t.integer "hashtag_id"
+    t.string "hashtaggable_type"
+    t.integer "hashtaggable_id"
+    t.index ["hashtag_id"], name: "index_simple_hashtag_on_hashtag_id"
+    t.index ["hashtaggable_id", "hashtaggable_type"], name: "index_hashtaggings_hashtaggable_id_hashtaggable_type"
+    t.index ["hashtaggable_type", "hashtaggable_id"], name: "index_simple_hashtag_on_hashtaggable_type_and_hashtaggable_id"
+  end
+
+  create_table "simple_hashtag_hashtags", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_simple_hashtag_hashtags_on_name"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "twitters", force: :cascade do |t|
     t.text "twitter"

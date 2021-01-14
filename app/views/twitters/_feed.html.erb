@@ -11,7 +11,18 @@
 		</div>
 	</article>
   <% end %>
+ <div class="content">
+		  	  <%= search_form_for @q do |f| %>
 
+  
+					<%= f.label :twitter_cont %>
+					<%= f.text_field :twitter_cont %>
+
+					
+
+					<%= f.submit %>
+					<% end %>
+</div>
 
 <% @twitters.each do | twitter | %>
   <div class="box">
@@ -21,10 +32,11 @@
   				<%= gravatar_image_tag(twitter.user.try(:email), size: 64, alt: twitter.user.try(:name)) %>
   			</figure>
   		</div>
-		  	  
+		 
   		<div class="media-content">
 
   			<div class="content">
+			  
   				<strong><%= twitter.user.try(:name) %></strong><br />
   				<small><%= twitter.user.try(:username) %></small><br/>
 				<p><%= twitter.twitter %></p>
@@ -63,8 +75,11 @@
 										<span class="likes-count"><%= twitter.get_likes.size %></span><i class="fas fa-heart"></i>
 										<% end %>								
 							<% end %>
-					  
+
+								
+								
 					  </div>
+					
   				</nav>
         	<% end %>
   		</div>
